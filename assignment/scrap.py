@@ -1,32 +1,48 @@
 import requests
 from bs4 import BeautifulSoup
+
+url = "https://en.wikipedia.org/wiki/india"
+response = requests.get(url)
+
+
+html_content = response.content
+soup = BeautifulSoup(html_content, "html.parser")
+infobox_table = soup.find("table", {"class": "infobox ib-country vcard"})
+data = {}
+for tr in infobox_table.find_all("tr"):
+   print(tr.text)
+'''
+import requests
+from bs4 import BeautifulSoup
 import json
 
 
-res=requests.get("https://en.wikipedia.org/wiki/India")
+def scrape_country_info(country_name):
+    # Make a request to the Wikipedia page for the country
+    response = requests.get(f'https://en.wikipedia.org/wiki/{country_name}')
 
-soup = BeautifulSoup(res.content,'html.parser')
-#python assignment/scrap.pyprint(soup.prettify())
+    # Parse the HTML of the page
+    soup = BeautifulSoup(response.text, 'html.parser')
 
+    # Find the table containing the information about the country
+    table = soup.find('table', {'class': 'infobox ib-country vcard'})
 
-def get_infobox(url):
-       response = requests.get(url)
-       bs = BeautifulSoup(response.content,'html.parser')
+    # Initialize an empty dictionary to store the data
+    data = {}
 
-       table = bs.find('table', {'class' :'infobox ib-country vcard'})
-       result = {}
-       row_count = 0
-       if table is None:
-         pass
-       else:
-         for tr in table.find_all('tr'):
-             if tr.find('th'):
-                 pass
-             else:
-                 row_count += 1
-         if row_count > 1:
-             if tr is not None:
-               result[tr.find('td').text.strip()] = tr.find('td').text
-         return result
+    # Loop through all the rows in the table
+    for row in table.find_all('tr'):
+        # Get the name and value of the data point
+        name = row.find('th').text
+        value = row.find('td').text
 
-print(get_infobox("https://en.wikipedia.org/wiki/India"))        
+        # Add the data point to the dictionary
+        data[name] = value
+
+    # Return the data as a JSON object
+    return data
+
+country_data = scrape_country_info('Spain')
+json_data = json.dumps(country_data)  
+
+print(json_data)'''
